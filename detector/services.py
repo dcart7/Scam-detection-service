@@ -3,6 +3,8 @@ import re
 
 
 model, vectorizer = joblib.load("model/scam_model.pkl")
+_classes = list(getattr(model, "classes_", []))
+_scam_idx = _classes.index("scam") if "scam" in _classes else 1
 
 
 keywords = [
@@ -22,7 +24,7 @@ def url_score(text):
 
 def detect_scam(text):
     vec = vectorizer.transform([text])
-    ml_prob = model.predict_proba(vec)[0][1]
+    ml_prob = model.predict_proba(vec)[0][_scam_idx]
 
     k_score = keyword_score(text)
     u_score = url_score(text)
